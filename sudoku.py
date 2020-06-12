@@ -1,4 +1,5 @@
 from math import sqrt
+from random import shuffle
 
 class Game:
     def __init__(self,board,size):
@@ -10,6 +11,12 @@ class Game:
                 for col in row:
                     counter = counter+1 if col == 0 else counter
             self.emptyCells = counter
+            self.num_list_random = []
+            self.num_list = []
+            for num in range(1,size+1):
+                self.num_list.append(num)
+                self.num_list_random.append(num)
+            shuffle(self.num_list_random)
     
     def printBoard(self):
         print("-"*37)
@@ -64,10 +71,26 @@ class Game:
             for col in range(9):
                 if self.board[row][col] != 0:
                     continue
-                for num in range(1,10):
+                for num in self.num_list:
                     if self.isValidInsertion(num,row,col):
                         self.setPosition(num,row,col)
                         if self.solve_Normal():
+                            return True
+                        else :
+                            self.unsetPosition(row,col)
+                return False
+    
+    def solve_Randomised(self):
+        if self.getEmptyCells() == 0:
+            return True
+        for row in range(9):
+            for col in range(9):
+                if self.board[row][col] != 0:
+                    continue
+                for num in self.num_list_random:
+                    if self.isValidInsertion(num,row,col):
+                        self.setPosition(num,row,col)
+                        if self.solve_Randomised():
                             return True
                         else :
                             self.unsetPosition(row,col)
